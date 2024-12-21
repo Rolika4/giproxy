@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"giproxy/internal/utils"
 	"encoding/json"
+	"os"
 )
 
 
 func GetBranchesFromBitbucket(w http.ResponseWriter, body map[string]interface{}) {
 
-	var bitbucketApiPath = "https://api.bitbucket.org"
+	var bitbucketApiPath = os.Getenv("BITBUCKET_URL")
 
 	var values struct {
 		Values json.RawMessage `json:"values"`
@@ -55,7 +56,7 @@ func GetBranchesFromBitbucket(w http.ResponseWriter, body map[string]interface{}
 
 	link := fmt.Sprintf("%s/2.0/repositories/%s/%s/refs/branches", bitbucketApiPath, ownerStr, repoStr)
 
-	response, err := utils.SendRequestWithAuth("GET", link, "Basic")
+	response, err := utils.SendRequestWithAuth("GET", link, "Basic", "BITBUCKET_TOKEN")
 	if err != nil {
 		log.Printf("Failed to fetch branches: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to fetch branches: %v", err), http.StatusInternalServerError)
@@ -92,6 +93,18 @@ func GetBranchesFromBitbucket(w http.ResponseWriter, body map[string]interface{}
 		http.Error(w, "Failed to process branches data", http.StatusInternalServerError)
 		return
 	}
+
+	output := map[string]interface{}{
+		"git_provider": "bitbucket",
+		"request":      "branches",
+		"workspace":    ownerStr,
+		"repository":   repo,
+		"response":     branches,
+	}
+
+	prettyJSON, err := json.Marshal(output)
+
+	log.Printf("%s", string(prettyJSON))
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

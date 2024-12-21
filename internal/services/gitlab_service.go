@@ -7,12 +7,13 @@ import (
 	"net/http"
 	"net/url"
 	"giproxy/internal/utils"
+	"os"
 )
 
 
 func GetBranchesFromGitlab(w http.ResponseWriter, body map[string]interface{}) {
 
-	var gitlabApiPath = "https://git.epam.com"
+	var gitlabApiPath = os.Getenv("GITLAB_URL")
 
 	type BranchInfo struct {
 		Name   string `json:"name"`
@@ -52,7 +53,7 @@ func GetBranchesFromGitlab(w http.ResponseWriter, body map[string]interface{}) {
 	ownerRepoPath := fmt.Sprintf("%s/%s", ownerStr, repoStr)
 	link := fmt.Sprintf("%s/api/v4/projects/%s/repository/branches", gitlabApiPath, url.PathEscape(ownerRepoPath))
 
-	response, err := utils.SendRequestWithAuth("GET", link, "Bearer")
+	response, err := utils.SendRequestWithAuth("GET", link, "Bearer", "GITLAB_TOKEN")
 	if err != nil {
 		log.Printf("Failed to fetch branches: %v", err)
 		http.Error(w, fmt.Sprintf("Failed to fetch branches: %v", err), http.StatusInternalServerError)
@@ -81,6 +82,18 @@ func GetBranchesFromGitlab(w http.ResponseWriter, body map[string]interface{}) {
 		http.Error(w, "Failed to process branches data", http.StatusInternalServerError)
 		return
 	}
+
+	output := map[string]interface{}{
+		"git_provider": "gitlab",
+		"request":      "branches",
+		"workspace":    ownerStr,
+		"repository":   repo,
+		"response":     branches,
+	}
+
+	prettyJSON, err := json.Marshal(output)
+
+	log.Printf("%s", string(prettyJSON))
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

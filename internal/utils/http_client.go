@@ -8,8 +8,8 @@ import (
 	"os"
 )
 
-func SendRequestWithAuth(method, url, authType string) ([]byte, error) {
-	authToken := os.Getenv("GIT_TOKEN")
+func SendRequestWithAuth(method, url, authType, tokenName string) ([]byte, error) {
+	authToken := os.Getenv(tokenName)
 	if authToken == "" {
 		return nil, errors.New("GIT_TOKEN is not set in the environment")
 	}
