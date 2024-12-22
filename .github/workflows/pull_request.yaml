@@ -24,11 +24,14 @@ jobs:
         with:
           go-version: ${{ env.GOLANG_VERSION }}
 
-      - name: Make Build
+      - name: Build
         run: make build
 
-      - name: Make Lint
+      - name: Lint
         run: make lint
+
+      - name: Unit Tests
+        run: make test
 
   docker-lint:
     needs: [build-and-lint]
