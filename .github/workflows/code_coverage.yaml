@@ -1,38 +1,33 @@
-name: "CodeCoverage"
+
+name: Go
 
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - '**/*.md'
-      - '**/*.py'
-      - '**/*.txt'
-      - '**/*.yaml'
+
+env:
+  GOLANG_VERSION: '1.22'
 
 jobs:
-  analyze:
-    name: Analyze
+
+  build:
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'go' ]
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+    - name: Set up Go
+      uses: actions/setup-go@v4
       with:
-        languages: ${{ matrix.language }}
+        go-version: ${{ env.GOLANG_VERSION }}
 
     - name: Build
-      shell: bash
-      run: |
-        make build
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      run: make build
+
+    - name: Test
+      run: make test
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
       with:
-        category: "/language:${{ matrix.language }}"
+        token: ${{ secrets.CODECOV_TOKEN }}
+        slug: Rolika4/giproxy
