@@ -3,7 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"giproxy/internal/services"
+	"giproxy/internal/services/gitlab"
 	"giproxy/internal/utils"
 )
 

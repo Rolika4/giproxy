@@ -56,6 +56,8 @@ build: ## Building the application
 lint: golangci-lint ## Run go lint
 	${GOLANGCILINT} run
 
+test:
+	go test ./... -v
 
 .PHONY: build-image
 build-image: ## Building the docker image
