@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 )
@@ -28,7 +28,7 @@ func SendRequestWithAuth(method, url, authType, tokenName string) ([]byte, int, 
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body) // Используем io.ReadAll вместо ioutil.ReadAll
 	if err != nil {
 		return nil, resp.StatusCode, fmt.Errorf("failed to read response body: %v", err)
 	}
