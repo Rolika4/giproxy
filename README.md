@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/github/Rolika4/giproxy/branch/main/graph/badge.svg?token=4G13TLABQY)](https://codecov.io/github/Rolika4/giproxy)
+
 # Giproxy
 
 Giproxy is a lightweight proxy server designed to facilitate interactions with Git providers (like GitLab, GitHub, and Bitbucket). The tool simplifies and unifies API requests, making integration with various Git services effortless.
