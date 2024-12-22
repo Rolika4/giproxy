@@ -51,10 +51,10 @@ func GetBranchesFromGitHub(w http.ResponseWriter, body map[string]interface{}) {
 
 	link := fmt.Sprintf("%s/repos/%s/%s/branches", githubApiPath, ownerStr, repoStr)
 
-	response, err := utils.SendRequestWithAuth("GET", link, "Bearer", "GITHUB_TOKEN")
+	response, statusCode, err :=  utils.SendRequestWithAuth("GET", link, "Bearer", "GITHUB_TOKEN")
 	if err != nil {
 		log.Printf("Failed to fetch branches: %v", err)
-		http.Error(w, fmt.Sprintf("Failed to fetch branches: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Failed to fetch branches: %v", err), statusCode)
 		return
 	}
 

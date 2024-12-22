@@ -56,10 +56,10 @@ func GetBranchesFromBitbucket(w http.ResponseWriter, body map[string]interface{}
 
 	link := fmt.Sprintf("%s/2.0/repositories/%s/%s/refs/branches", bitbucketApiPath, ownerStr, repoStr)
 
-	response, err := utils.SendRequestWithAuth("GET", link, "Basic", "BITBUCKET_TOKEN")
+	response, statusCode, err := utils.SendRequestWithAuth("GET", link, "Basic", "BITBUCKET_TOKEN")
 	if err != nil {
 		log.Printf("Failed to fetch branches: %v", err)
-		http.Error(w, fmt.Sprintf("Failed to fetch branches: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Failed to fetch branches: %v", err), statusCode)
 		return
 	}
 	

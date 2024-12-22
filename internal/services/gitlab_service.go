@@ -53,10 +53,10 @@ func GetBranchesFromGitlab(w http.ResponseWriter, body map[string]interface{}) {
 	ownerRepoPath := fmt.Sprintf("%s/%s", ownerStr, repoStr)
 	link := fmt.Sprintf("%s/api/v4/projects/%s/repository/branches", gitlabApiPath, url.PathEscape(ownerRepoPath))
 
-	response, err := utils.SendRequestWithAuth("GET", link, "Bearer", "GITLAB_TOKEN")
+	response, statusCode, err := utils.SendRequestWithAuth("GET", link, "Bearer", "GITLAB_TOKEN")
 	if err != nil {
 		log.Printf("Failed to fetch branches: %v", err)
-		http.Error(w, fmt.Sprintf("Failed to fetch branches: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Failed to fetch branches: %v", err), statusCode)
 		return
 	}
 
