@@ -1,0 +1,38 @@
+openapi: 3.0.0
+info:
+  title: GiProxy API
+  version: 1.0.0
+paths:
+  /api/git/branches:
+    get:
+      summary: Get branches from Git server
+      parameters:
+        - name: gitserver
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Repository and owner information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                repo:
+                  type: string
+                  description: Repository name
+                owner:
+                  type: string
+                  description: Owner of the repository
+              required:
+                - repo
+                - owner
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
