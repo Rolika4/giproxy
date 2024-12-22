@@ -52,6 +52,11 @@ build: ## Building the application
 	@echo ">>> Building application..."
 	CGO_ENABLED=0 GOOS=${HOST_OS} GOARCH=${HOST_ARCH} go build -v -o ${DIST_DIR}/${BIN_NAME} ${ENTRY_FILE}
 
+.PHONY: lint
+lint: golangci-lint ## Run go lint
+	${GOLANGCILINT} run
+
+
 .PHONY: build-image
 build-image: ## Building the docker image
 	@echo ">>> Building docker image..."
@@ -63,3 +68,25 @@ reset: ## Resetting dependencies
 	@echo ">>> Resetting dependencies..."
 	rm -rf go.sum
 	$(MAKE) install
+
+
+GOLANGCILINT = ${CURRENT_DIR}/bin/golangci-lint
+
+.PHONY: golangci-lint
+golangci-lint: ## Download golangci-lint locally if necessary.
+	$(call go-get-tool,$(GOLANGCILINT),github.com/golangci/golangci-lint/cmd/golangci-lint,v1.62.2)
+
+# go-get-tool will 'go get' any package $2 and install it to $1.
+PROJECT_DIR := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+define go-get-tool
+@[ -f $(1) ] || { \
+set -e ;\
+TMP_DIR=$$(mktemp -d) ;\
+cd $$TMP_DIR ;\
+go mod init tmp ;\
+echo "Downloading $(2)" ;\
+go get -d $(2)@$(3) ;\
+GOBIN=$(PROJECT_DIR)/bin go install $(2) ;\
+rm -rf $$TMP_DIR ;\
+}
+endef

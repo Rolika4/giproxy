@@ -8,7 +8,11 @@ import (
 )
 
 func main() {
-	godotenv.Load()
+	err := godotenv.Load()
+    if err != nil {
+        log.Fatalf("Error loading .env file: %v", err)
+    }
+	
 	router := routes.SetupRouter()
 
 	log.Println("Server running on port 8080")

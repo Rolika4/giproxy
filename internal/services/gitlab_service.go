@@ -92,6 +92,11 @@ func GetBranchesFromGitlab(w http.ResponseWriter, body map[string]interface{}) {
 	}
 
 	prettyJSON, err := json.Marshal(output)
+	if err != nil {
+		log.Printf("Failed to serialize output: %v", err)
+		http.Error(w, "Failed to serialize output", http.StatusInternalServerError)
+		return
+	}
 
 	log.Printf("%s", string(prettyJSON))
 
