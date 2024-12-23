@@ -18,8 +18,12 @@ func SendRequestWithAuth(method, url, authType, tokenName string) ([]byte, int, 
 		return nil, http.StatusInternalServerError, fmt.Errorf("failed to create request: %v", err)
 	}
 
-	authHeader := fmt.Sprintf("%s %s", authType, authToken)
-	req.Header.Set("Authorization", authHeader)
+	if authType == "X-Api-Key" {
+		req.Header.Set(authType, authToken)
+	} else {
+		authHeader := fmt.Sprintf("%s %s", authType, authToken)
+		req.Header.Set("Authorization", authHeader)
+	}
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -28,7 +32,7 @@ func SendRequestWithAuth(method, url, authType, tokenName string) ([]byte, int, 
 	}
 	defer resp.Body.Close()
 
-	body, err := io.ReadAll(resp.Body) // Используем io.ReadAll вместо ioutil.ReadAll
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, resp.StatusCode, fmt.Errorf("failed to read response body: %v", err)
 	}
