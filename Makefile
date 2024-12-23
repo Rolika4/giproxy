@@ -50,7 +50,7 @@ watch: ## Running the application with nodemon (hot reload)
 .PHONY: build
 build: ## Building the application
 	@echo ">>> Building application..."
-	CGO_ENABLED=0 GOOS=${HOST_OS} GOARCH=${HOST_ARCH} go build -v -o ${DIST_DIR}/${BIN_NAME} ${ENTRY_FILE}
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o ${DIST_DIR}/${BIN_NAME} ${ENTRY_FILE}
 
 .PHONY: lint
 lint: golangci-lint ## Run go lint
